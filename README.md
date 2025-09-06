@@ -2,7 +2,6 @@
 
 Skye Dog is a platformer game built with Phaser 3 and React, bundled using Vite. Help Skye collect bones, jump on platforms, and reach victory!
 
-![screenshot](screenshot.png)
 
 ## How to Play
 
@@ -56,3 +55,4 @@ Powered by Phaser 3, React, and Vite.
 - [React Documentation](https://react.dev)
 
 Enjoy playing Skye Dog!
+

@@ -5,6 +5,8 @@ import { MainMenu } from './scenes/MainMenu';
 import Phaser from 'phaser';
 import { Preloader } from './scenes/Preloader';
 import { YouWin } from './scenes/YouWin';
+import { Level2 } from './scenes/Level2';
+import { Level3 } from './scenes/Level3';
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -20,7 +22,9 @@ const config = {
         MainMenu,
         Game,
         GameOver,
-        YouWin
+        YouWin,
+        Level2,
+        Level3
     ],
     physics: {
         default: 'arcade',

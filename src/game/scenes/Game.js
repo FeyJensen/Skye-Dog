@@ -74,13 +74,8 @@ export class Game extends Scene {
         this.score += 10;
         this.scoreText.setText('Score: ' + this.score);
 
-        /*if (this.bones.countActive(true) === 0) {
-            this.bones.children.iterate((child) => {
-                child.enableBody(true, child.x, 0, true, true);
-            });
-        }*/
        if (this.bones.countActive(true) === 0) {
-        this.scene.start('YouWin');
+        this.scene.start('Level2');
     }
     }
 }

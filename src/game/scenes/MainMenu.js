@@ -12,7 +12,7 @@ export class MainMenu extends Scene {
     create() {
         this.add.image(512, 384, 'background');
 
-        this.logo = this.add.image(512, 300, 'logo').setScale(0.7).setDepth(100);
+        this.logo = this.add.image(512, 330, 'logo').setScale(0.8).setDepth(100);
 
 
         this.add.text(512, 100, 'Main Menu', {
@@ -21,12 +21,19 @@ export class MainMenu extends Scene {
             align: 'center'
         }).setDepth(100).setOrigin(0.5);
 
-        const startButton = this.add.text(512, 500, 'Start Game', {
-            fontFamily: 'Arial',
-            fontSize: 32,
-            color: '#ff0',
-            backgroundColor: '#000'
+        const startButton = this.add.text(512, 540, 'Start Game', {
+            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 8,
+            align: 'center'
         }).setOrigin(0.5).setInteractive();
+
+        this.tweens.add({
+            targets: startButton,
+            alpha: { from: 1, to: 0.2 },
+            duration: 500,
+            yoyo: true,
+            repeat: -1
+        });
 
         startButton.on('pointerdown', () => {
             this.changeScene();

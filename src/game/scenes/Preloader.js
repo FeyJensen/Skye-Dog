@@ -37,6 +37,7 @@ export class Preloader extends Scene
         this.load.image('logo', 'SkyeDogLogo.png');
         this.load.image('bone', 'bone.png');
         this.load.image('star', 'star.png');
+        this.load.image('hydrant', 'FireHydrant.png');
         
         
     }

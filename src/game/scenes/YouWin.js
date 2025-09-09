@@ -17,18 +17,10 @@ export class YouWin extends Scene {
             align: 'center'
         }).setOrigin(0.5);
 
-        this.add.text(512, 400, 'Congratulations!', {
-            fontFamily: 'Arial',
-            fontSize: 32,
-            color: '#fff',
+        const restartButton = this.add.text(512, 400, 'Restart', {
+            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 8,
             align: 'center'
-        }).setOrigin(0.5);
-
-        const restartButton = this.add.text(512, 500, 'Restart', {
-            fontFamily: 'Arial',
-            fontSize: 32,
-            color: '#ff0',
-            backgroundColor: '#000'
         }).setOrigin(0.5).setInteractive();
 
         restartButton.on('pointerdown', () => {

@@ -7,6 +7,8 @@ import { Preloader } from './scenes/Preloader';
 import { YouWin } from './scenes/YouWin';
 import { Level2 } from './scenes/Level2';
 import { Level3 } from './scenes/Level3';
+import { Level4 } from './scenes/Level4';
+import { Level5 } from './scenes/Level5';
 
 // Find out more information about the Game Config at:
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -24,7 +26,9 @@ const config = {
         GameOver,
         YouWin,
         Level2,
-        Level3
+        Level3,
+        Level4,
+        Level5
     ],
     physics: {
         default: 'arcade',

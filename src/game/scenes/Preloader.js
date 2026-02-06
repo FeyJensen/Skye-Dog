@@ -38,6 +38,7 @@ export class Preloader extends Scene
         this.load.image('bone', 'bone.png');
         this.load.image('star', 'star.png');
         this.load.image('hydrant', 'FireHydrant.png');
+        this.load.image('chocolate', 'chocolate-1.png.png');
         
         
     }

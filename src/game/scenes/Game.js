@@ -1,6 +1,7 @@
 import { Player } from '../../GameObject/Player';
 import { Scene } from 'phaser';
 import { EventBus } from '../EventBus';
+import { handlePlayerControls } from '../controls';
 
 
 export class Game extends Scene {
@@ -38,30 +39,18 @@ export class Game extends Scene {
             fill: '#fff'
         });
 
+        // Level 
+        this.levelText = this.add.text(16, 56, 'LEVEL 1', {
+            fontSize: '28px',
+            fill: '#ffff00',
+            fontStyle: 'bold'
+        });
+
         EventBus.emit('current-scene-ready', this);
     }
 
     update() {
-        if (this.cursors.left.isDown) {
-            this.player.moveLeft();
-        }
-        else if (this.cursors.right.isDown) {
-            this.player.moveRight();
-        }
-        else if (this.cursors.down.isDown) {
-            this.player.moveDown();
-        }
-        else if (this.cursors.up.isDown) {
-            this.player.moveUp();
-        }
-        else {
-            this.player.idle
-        }
-
-        if (this.cursors.up.isDown) {
-            this.player.jump();
-        }
-
+        handlePlayerControls(this.player, this.cursors);
     }
 
     changeScene() {

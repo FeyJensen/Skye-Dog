@@ -1,6 +1,7 @@
 import { Player } from '../../GameObject/Player';
 import { Scene } from 'phaser';
 import { EventBus } from '../EventBus';
+import { handlePlayerControls, hitChocolate, Hearts } from '../controls';
 
 export class Level4 extends Scene {
     constructor() {
@@ -8,6 +9,10 @@ export class Level4 extends Scene {
     }
 
     create() {
+        // Health system - 3 hearts
+        this.health = 3;
+        this.hearts = Hearts(this, 3, 0.1, 30, 40, 40);
+
         this.cameras.main.setBackgroundColor(0x3cb371); 
 
         // Platforms
@@ -67,7 +72,7 @@ export class Level4 extends Scene {
         this.physics.add.collider(this.player, this.platforms);
         
         // Chocolate 
-        this.physics.add.overlap(this.player, this.chocolates, this.hitChocolate, null, this); 
+        this.physics.add.overlap(this.player, this.chocolates, (player, chocolate) => hitChocolate(this, player, chocolate), null, this); 
         this.physics.add.collider(this.player, this.movingPlatform1);
         this.physics.add.collider(this.player, this.movingPlatform2);
 
@@ -92,7 +97,7 @@ export class Level4 extends Scene {
 
         // Timer!
         this.timeLeft = 45;
-        this.timerText = this.add.text(950, 16, 'Time: 45', {
+        this.timerText = this.add.text(450, 16, 'Time: 45', {
             fontSize: '32px',
             fill: '#ff0000',
             fontStyle: 'bold'
@@ -104,13 +109,6 @@ export class Level4 extends Scene {
             loop: true
         });
 
-        // Health - 3 hearts
-        this.health = 3;
-        this.hearts = [];
-        for (let i = 0; i < 3; i++) {
-            const heart = this.add.image(950 + (i * 40), 70, 'heart').setScale(0.05);
-            this.hearts.push(heart);
-        }
 
         this.score = 0;
         this.scoreText = this.add.text(16, 16, 'Score: 0', {
@@ -130,21 +128,7 @@ export class Level4 extends Scene {
     }
 
     update() {
-        if (this.cursors.left.isDown) {
-            this.player.moveLeft();
-        }
-        else if (this.cursors.right.isDown) {
-            this.player.moveRight();
-        }
-        else if (this.cursors.down.isDown) {
-            this.player.moveDown();
-        }
-        else if (this.cursors.up.isDown) {
-            this.player.moveUp();
-        }
-        else {
-            this.player.idle;
-        }
+        handlePlayerControls(this.player, this.cursors);
 
         // Moving platform 1 - vertical movement
         if (this.movingPlatform1.y <= 300) {
@@ -181,10 +165,6 @@ export class Level4 extends Scene {
         ) < 100 && Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
             this.hydrant4.disableBody(true, true);
         }
-
-        if (this.cursors.up.isDown) {
-            this.player.jump();
-        }
     }
 
     updateTimer() {
@@ -198,38 +178,6 @@ export class Level4 extends Scene {
         
         if (this.timeLeft <= 0) {
             this.scene.start('GameOver');
-        }
-    }
-
-    hitChocolate(player, chocolate) {
-        // Disable the chocolate temporarily to prevent multiple hits
-        chocolate.disableBody(true, true);
-        
-        // Lose a heart
-        this.health--;
-        
-        // Remove heart from display
-        if (this.hearts[this.health]) {
-            this.hearts[this.health].destroy();
-        }
-        
-        // Flash screen red
-        this.cameras.main.shake(200, 0.01);
-        this.cameras.main.flash(200, 255, 0, 0);
-        
-        // Check if dead
-        if (this.health <= 0) {
-            this.timeEvent.remove();
-            this.time.delayedCall(300, () => {
-                this.scene.start('GameOver');
-            });
-        } else {
-            // Re-enable chocolate after brief delay
-            this.time.delayedCall(1000, () => {
-                if (chocolate.body) {
-                    chocolate.enableBody(true, chocolate.x, chocolate.y, true, true);
-                }
-            });
         }
     }
 

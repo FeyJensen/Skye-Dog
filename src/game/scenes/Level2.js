@@ -1,6 +1,7 @@
 import { Player } from '../../GameObject/Player';
 import { Scene } from 'phaser';
 import { EventBus } from '../EventBus';
+import { handlePlayerControls } from '../controls';
 
 export class Level2 extends Scene {
     constructor() {
@@ -45,37 +46,23 @@ export class Level2 extends Scene {
             fill: '#fff'
         });
 
-
+        // Level 
+        this.levelText = this.add.text(16, 56, 'LEVEL 2', {
+            fontSize: '28px',
+            fill: '#ffff00',
+            fontStyle: 'bold'
+        });
 
         EventBus.emit('current-scene-ready', this);
     }
 
     update() {
-        // Same as your Game scene
-        if (this.cursors.left.isDown) {
-            this.player.moveLeft();
-        }
-        else if (this.cursors.right.isDown) {
-            this.player.moveRight();
-        }
-        else if (this.cursors.down.isDown) {
-            this.player.moveDown();
-        }
-        else if (this.cursors.up.isDown) {
-            this.player.moveUp();
-        }
-        else {
-            this.player.idle
-        }
+        handlePlayerControls(this.player, this.cursors);
 
-        if (this.hydrantObj.active && Phaser.Math.Distance.Between(
+        if (this.hydrantObj && this.hydrantObj.active && Phaser.Math.Distance.Between(
             this.player.x, this.player.y, this.hydrantObj.x, this.hydrantObj.y
         ) < 100 && Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
             this.hydrantObj.disableBody(true, true);
-        }
-
-        if (this.cursors.up.isDown) {
-        this.player.jump();
         }
     }
 

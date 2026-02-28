@@ -1,6 +1,7 @@
 import { Player } from '../../GameObject/Player';
 import { Scene } from 'phaser';
 import { EventBus } from '../EventBus';
+import { handlePlayerControls, hitChocolate, Hearts } from '../controls';
 
 export class Level3 extends Scene {
     constructor() {
@@ -8,6 +9,9 @@ export class Level3 extends Scene {
     }
 
     create() {
+        // Health system - 3 hearts
+        this.health = 3;
+        this.hearts = Hearts(this, 3, 0.1, 30, 40, 40);
         this.cameras.main.setBackgroundColor(0x3cb371); 
 
         // Platforms - More challenging layout with smaller platforms
@@ -19,13 +23,13 @@ export class Level3 extends Scene {
         this.platforms.create(700, 380, 'wall').setScale(0.3, 1).refreshBody();
         this.platforms.create(200, 300, 'wall').setScale(0.3, 1).refreshBody();
         this.platforms.create(950, 250, 'wall').setScale(0.3, 1).refreshBody();
-        this.platforms.create(500, 150, 'wall').setScale(0.25, 1).refreshBody(); // Top platform (tiny!)
+        this.platforms.create(500, 150, 'wall').setScale(0.25, 1).refreshBody(); // Top platform 
 
         // Moving platform
-        this.movingPlatform = this.physics.add.image(600, 550, 'wall').setScale(0.4, 1);
-        this.movingPlatform.setImmovable(true);
-        this.movingPlatform.body.setAllowGravity(false);
-        this.movingPlatform.setVelocityX(100);
+         this.movingPlatform = this.physics.add.image(600, 550, 'wall').setScale(0.4, 1);
+         this.movingPlatform.setImmovable(true);
+         this.movingPlatform.body.setAllowGravity(false);
+         this.movingPlatform.setVelocityX(100);
 
         // Multiple Hydrants - obstacles to avoid
         this.hydrants = this.physics.add.staticGroup();
@@ -46,7 +50,7 @@ export class Level3 extends Scene {
         this.bones.create(700, 330, 'bone').setScale(0.3).refreshBody();
         this.bones.create(200, 250, 'bone').setScale(0.3).refreshBody();
         this.bones.create(950, 200, 'bone').setScale(0.3).refreshBody();
-        this.bones.create(500, 100, 'bone').setScale(0.3).refreshBody(); // Hardest one!
+        this.bones.create(500, 100, 'bone').setScale(0.3).refreshBody(); 
         this.bones.create(150, 600, 'bone').setScale(0.3).refreshBody();
 
         this.physics.add.collider(this.bones, this.platforms);
@@ -55,9 +59,16 @@ export class Level3 extends Scene {
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
+        //chocolate
+        this.chocolates = this.physics.add.group();
+        this.chocolates.add(this.physics.add.image(880, 160, 'chocolate').setScale(0.15));
+        this.chocolates.add(this.physics.add.image(950, 110, 'chocolate').setScale(0.15));
+        this.physics.add.overlap(this.player, this.chocolates, (player, chocolate) => hitChocolate(this, player, chocolate), null, this);
+        
+
         // Timer for added challenge
         this.timeLeft = 60;
-        this.timerText = this.add.text(1050, 16, 'Time: 60', {
+        this.timerText = this.add.text(450, 16, 'Time: 60', {
             fontSize: '32px',
             fill: '#ff0000'
         });
@@ -74,25 +85,18 @@ export class Level3 extends Scene {
             fill: '#000'
         });
 
+        // Level 
+        this.levelText = this.add.text(16, 56, 'LEVEL 3', {
+            fontSize: '28px',
+            fill: '#ffff00',
+            fontStyle: 'bold'
+        });
+
         EventBus.emit('current-scene-ready', this);
     }
 
     update() {
-        if (this.cursors.left.isDown) {
-            this.player.moveLeft();
-        }
-        else if (this.cursors.right.isDown) {
-            this.player.moveRight();
-        }
-        else if (this.cursors.down.isDown) {
-            this.player.moveDown();
-        }
-        else if (this.cursors.up.isDown) {
-            this.player.moveUp();
-        }
-        else {
-            this.player.idle;
-        }
+        handlePlayerControls(this.player, this.cursors);
 
         // Moving platform boundaries
         if (this.movingPlatform.x >= 800) {
@@ -116,10 +120,6 @@ export class Level3 extends Scene {
             this.player.x, this.player.y, this.hydrant3.x, this.hydrant3.y
         ) < 100 && Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
             this.hydrant3.disableBody(true, true);
-        }
-
-        if (this.cursors.up.isDown) {
-            this.player.jump();
         }
     }
 

@@ -1,6 +1,7 @@
 import { Player } from '../../GameObject/Player';
 import { Scene } from 'phaser';
 import { EventBus } from '../EventBus';
+import { handlePlayerControls } from '../controls';
 
 export class Level5 extends Scene {
     constructor() {
@@ -14,7 +15,7 @@ export class Level5 extends Scene {
         this.platforms = this.physics.add.staticGroup();
 
         this.platforms.create(100, 680, 'wall').setScale(0.25, 1).refreshBody();
-        
+
         // Scattered tiny platforms
         this.platforms.create(250, 620, 'wall').setScale(0.2, 1).refreshBody();
         this.platforms.create(450, 560, 'wall').setScale(0.2, 1).refreshBody();
@@ -81,7 +82,7 @@ export class Level5 extends Scene {
 
         // Timer
         this.timeLeft = 40;
-        this.timerText = this.add.text(1000, 16, 'Time: 40', {
+        this.timerText = this.add.text(450, 16, 'Time: 40', {
             fontSize: '36px',
             fill: '#ff0000',
             fontStyle: 'bold',
@@ -126,21 +127,7 @@ export class Level5 extends Scene {
     }
 
     update() {
-        if (this.cursors.left.isDown) {
-            this.player.moveLeft();
-        }
-        else if (this.cursors.right.isDown) {
-            this.player.moveRight();
-        }
-        else if (this.cursors.down.isDown) {
-            this.player.moveDown();
-        }
-        else if (this.cursors.up.isDown) {
-            this.player.moveUp();
-        }
-        else {
-            this.player.idle;
-        }
+        handlePlayerControls(this.player, this.cursors);
 
         // Moving platform 1 - horizontal
         if (this.movingPlatform1.x >= 600) {
@@ -172,21 +159,17 @@ export class Level5 extends Scene {
                 hydrant.disableBody(true, true);
             }
         });
-
-        if (this.cursors.up.isDown) {
-            this.player.jump();
-        }
     }
 
     updateTimer() {
         this.timeLeft--;
         this.timerText.setText('Time: ' + this.timeLeft);
-        
+
         // Flash timer when under 15 seconds
         if (this.timeLeft <= 15) {
             this.timerText.setColor(this.timeLeft % 2 === 0 ? '#ff0000' : '#ffffff');
         }
-        
+
         if (this.timeLeft <= 0) {
             this.scene.start('GameOver');
         }

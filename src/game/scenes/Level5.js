@@ -8,11 +8,11 @@ export class Level5 extends Scene {
     }
 
     create() {
-        this.cameras.main.setBackgroundColor(0x1e5631); // Darkest green - ultimate level
+        this.cameras.main.setBackgroundColor(0x3cb371);
 
-        // Extreme platform layout - sparse and challenging
+
         this.platforms = this.physics.add.staticGroup();
-        // Starting platform
+
         this.platforms.create(100, 680, 'wall').setScale(0.25, 1).refreshBody();
         
         // Scattered tiny platforms
@@ -27,7 +27,7 @@ export class Level5 extends Scene {
         this.platforms.create(900, 140, 'wall').setScale(0.15, 1).refreshBody();
         this.platforms.create(600, 80, 'wall').setScale(0.15, 1).refreshBody(); // Final platform
 
-        // THREE moving platforms - chaos!
+        // moving platforms
         this.movingPlatform1 = this.physics.add.image(350, 500, 'wall').setScale(0.25, 1);
         this.movingPlatform1.setImmovable(true);
         this.movingPlatform1.body.setAllowGravity(false);
@@ -43,7 +43,7 @@ export class Level5 extends Scene {
         this.movingPlatform3.body.setAllowGravity(false);
         this.movingPlatform3.setVelocityX(-140);
 
-        // Hydrant obstacles everywhere
+        // Hydrant 
         this.hydrants = this.physics.add.staticGroup();
         this.hydrant1 = this.hydrants.create(250, 570, 'hydrant').setScale(0.2).refreshBody();
         this.hydrant2 = this.hydrants.create(750, 450, 'hydrant').setScale(0.2).refreshBody();
@@ -60,7 +60,7 @@ export class Level5 extends Scene {
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        // 10 bones - epic collection challenge
+        // bones
         this.bones = this.physics.add.staticGroup();
         this.bones.create(100, 630, 'bone').setScale(0.3).refreshBody();
         this.bones.create(250, 570, 'bone').setScale(0.3).refreshBody();
@@ -79,7 +79,7 @@ export class Level5 extends Scene {
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        // Brutal timer - 40 seconds!
+        // Timer
         this.timeLeft = 40;
         this.timerText = this.add.text(1000, 16, 'Time: 40', {
             fontSize: '36px',

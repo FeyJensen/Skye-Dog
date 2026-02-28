@@ -14,8 +14,12 @@ import { Level5 } from './scenes/Level5';
 // https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config = {
     type: Phaser.AUTO,
-    width: 1024,
-    height: 700,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1024,
+        height: 700
+    },
     parent: 'game-container',
     backgroundColor: '#028af8',
     scene: [

@@ -8,15 +8,15 @@ export class Level4 extends Scene {
     }
 
     create() {
-        this.cameras.main.setBackgroundColor(0x2e8b57); // Darker green for final level
+        this.cameras.main.setBackgroundColor(0x3cb371); 
 
-        // Ultra-challenging platform layout - vertical maze style
+        // Platforms
         this.platforms = this.physics.add.staticGroup();
         // Ground level
         this.platforms.create(100, 680, 'wall').setScale(0.3, 1).refreshBody();
         this.platforms.create(1100, 680, 'wall').setScale(0.3, 1).refreshBody();
         
-        // Ascending platforms (zigzag pattern)
+        // Ascending platforms 
         this.platforms.create(300, 600, 'wall').setScale(0.25, 1).refreshBody();
         this.platforms.create(900, 550, 'wall').setScale(0.25, 1).refreshBody();
         this.platforms.create(200, 480, 'wall').setScale(0.25, 1).refreshBody();
@@ -25,7 +25,7 @@ export class Level4 extends Scene {
         this.platforms.create(800, 250, 'wall').setScale(0.2, 1).refreshBody();
         this.platforms.create(600, 170, 'wall').setScale(0.2, 1).refreshBody(); // Top center
 
-        // Two moving platforms for extra challenge
+        // Moving platforms
         this.movingPlatform1 = this.physics.add.image(500, 480, 'wall').setScale(0.3, 1);
         this.movingPlatform1.setImmovable(true);
         this.movingPlatform1.body.setAllowGravity(false);
@@ -36,20 +36,20 @@ export class Level4 extends Scene {
         this.movingPlatform2.body.setAllowGravity(false);
         this.movingPlatform2.setVelocityX(120);
 
-        // Hydrant obstacles
+        // Hydrants
         this.hydrants = this.physics.add.staticGroup();
         this.hydrant1 = this.hydrants.create(300, 550, 'hydrant').setScale(0.2).refreshBody();
         this.hydrant2 = this.hydrants.create(900, 500, 'hydrant').setScale(0.2).refreshBody();
         this.hydrant3 = this.hydrants.create(400, 270, 'hydrant').setScale(0.2).refreshBody();
         this.hydrant4 = this.hydrants.create(800, 200, 'hydrant').setScale(0.2).refreshBody();
 
-        // Dangerous moving chocolates!
+        // CHOCOLATES!
         this.chocolates = this.physics.add.group();
         
         this.chocolate1 = this.chocolates.create(400, 600, 'chocolate').setScale(0.15);
         this.chocolate1.setVelocityX(150);
         this.chocolate1.setBounce(1);
-        this.chocolate1.setCollideWorldBounds(true);
+        this.chocolate1.setCollideWorldBounds(true); //makes chocolate bounce off the edges
         
         this.chocolate2 = this.chocolates.create(700, 400, 'chocolate').setScale(0.15);
         this.chocolate2.setVelocityY(-120);
@@ -62,18 +62,18 @@ export class Level4 extends Scene {
         this.chocolate3.setBounce(1);
         this.chocolate3.setCollideWorldBounds(true);
 
-        // Player starts at bottom left
+        // Player Start
         this.player = new Player(this, 100, 630);
         this.physics.add.collider(this.player, this.platforms);
         
-        // Chocolate collision - hurts the player!
-        this.physics.add.overlap(this.player, this.chocolates, this.hitChocolate, null, this);
+        // Chocolate 
+        this.physics.add.overlap(this.player, this.chocolates, this.hitChocolate, null, this); 
         this.physics.add.collider(this.player, this.movingPlatform1);
         this.physics.add.collider(this.player, this.movingPlatform2);
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        // 8 bones scattered throughout - must get them all!
+        // Bones
         this.bones = this.physics.add.staticGroup();
         this.bones.create(100, 630, 'bone').setScale(0.3).refreshBody();
         this.bones.create(300, 550, 'bone').setScale(0.3).refreshBody();
@@ -82,7 +82,7 @@ export class Level4 extends Scene {
         this.bones.create(1000, 350, 'bone').setScale(0.3).refreshBody();
         this.bones.create(400, 270, 'bone').setScale(0.3).refreshBody();
         this.bones.create(800, 200, 'bone').setScale(0.3).refreshBody();
-        this.bones.create(600, 120, 'bone').setScale(0.3).refreshBody(); // Victory bone at top!
+        this.bones.create(600, 120, 'bone').setScale(0.3).refreshBody(); 
 
         this.physics.add.collider(this.bones, this.platforms);
         this.physics.add.collider(this.player, this.hydrants);
@@ -90,9 +90,9 @@ export class Level4 extends Scene {
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        // Tighter timer - 45 seconds!
+        // Timer!
         this.timeLeft = 45;
-        this.timerText = this.add.text(1050, 16, 'Time: 45', {
+        this.timerText = this.add.text(950, 16, 'Time: 45', {
             fontSize: '32px',
             fill: '#ff0000',
             fontStyle: 'bold'
@@ -104,6 +104,14 @@ export class Level4 extends Scene {
             loop: true
         });
 
+        // Health - 3 hearts
+        this.health = 3;
+        this.hearts = [];
+        for (let i = 0; i < 3; i++) {
+            const heart = this.add.image(950 + (i * 40), 70, 'heart').setScale(0.05);
+            this.hearts.push(heart);
+        }
+
         this.score = 0;
         this.scoreText = this.add.text(16, 16, 'Score: 0', {
             fontSize: '32px',
@@ -111,7 +119,7 @@ export class Level4 extends Scene {
             fontStyle: 'bold'
         });
 
-        // Level indicator
+        // Level 
         this.levelText = this.add.text(16, 56, 'LEVEL 4', {
             fontSize: '28px',
             fill: '#ffff00',
@@ -194,19 +202,39 @@ export class Level4 extends Scene {
     }
 
     hitChocolate(player, chocolate) {
+        // Disable the chocolate temporarily to prevent multiple hits
+        chocolate.disableBody(true, true);
+        
+        // Lose a heart
+        this.health--;
+        
+        // Remove heart from display
+        if (this.hearts[this.health]) {
+            this.hearts[this.health].destroy();
+        }
+        
         // Flash screen red
         this.cameras.main.shake(200, 0.01);
         this.cameras.main.flash(200, 255, 0, 0);
         
-        // Game over when hit by chocolate
-        this.timeEvent.remove();
-        this.time.delayedCall(300, () => {
-            this.scene.start('GameOver');
-        });
+        // Check if dead
+        if (this.health <= 0) {
+            this.timeEvent.remove();
+            this.time.delayedCall(300, () => {
+                this.scene.start('GameOver');
+            });
+        } else {
+            // Re-enable chocolate after brief delay
+            this.time.delayedCall(1000, () => {
+                if (chocolate.body) {
+                    chocolate.enableBody(true, chocolate.x, chocolate.y, true, true);
+                }
+            });
+        }
     }
 
     collectBone(player, bone) {
-        bone.disableBody(true, true);
+        bone.disableBody(true, true); 
         this.score += 10;
         this.scoreText.setText('Score: ' + this.score);
 

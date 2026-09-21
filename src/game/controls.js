@@ -55,13 +55,6 @@ export function hitChocolate(scene, player, chocolate) {
         scene.time.delayedCall(300, () => {
             scene.scene.start('GameOver');
         });
-    } else {
-        // Re-enable chocolate after brief delay
-        scene.time.delayedCall(2000, () => {
-            if (chocolate.body) {
-                chocolate.enableBody(true, chocolate.x, chocolate.y, true, true);
-            }
-        });
     }
 }
 

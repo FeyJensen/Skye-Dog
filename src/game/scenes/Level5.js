@@ -1,7 +1,7 @@
 import { Player } from '../../GameObject/Player';
 import { Scene } from 'phaser';
 import { EventBus } from '../EventBus';
-import { handlePlayerControls } from '../controls';
+import { handlePlayerControls, hitChocolate, Hearts } from '../controls';
 
 export class Level5 extends Scene {
     constructor() {
@@ -9,6 +9,9 @@ export class Level5 extends Scene {
     }
 
     create() {
+        // Health system - 3 hearts
+        this.health = 3;
+        this.hearts = Hearts(this, 3, 0.1, 30, 40, 40);
         this.cameras.main.setBackgroundColor(0x3cb371);
 
 
@@ -26,7 +29,7 @@ export class Level5 extends Scene {
         this.platforms.create(300, 260, 'wall').setScale(0.15, 1).refreshBody();
         this.platforms.create(100, 200, 'wall').setScale(0.15, 1).refreshBody();
         this.platforms.create(900, 140, 'wall').setScale(0.15, 1).refreshBody();
-        this.platforms.create(600, 80, 'wall').setScale(0.15, 1).refreshBody(); // Final platform
+        this.platforms.create(600, 80, 'wall').setScale(0.15, 1).refreshBody(); 
 
         // moving platforms
         this.movingPlatform1 = this.physics.add.image(350, 500, 'wall').setScale(0.25, 1);
@@ -52,6 +55,25 @@ export class Level5 extends Scene {
         this.hydrant4 = this.hydrants.create(300, 210, 'hydrant').setScale(0.2).refreshBody();
         this.hydrant5 = this.hydrants.create(900, 90, 'hydrant').setScale(0.2).refreshBody();
 
+        // CHOCOLATES!
+        this.chocolates = this.physics.add.group();
+        
+        this.chocolate1 = this.chocolates.create(300, 500, 'chocolate').setScale(0.15);
+        this.chocolate1.setVelocityX(150);
+        this.chocolate1.setBounce(1);
+        this.chocolate1.setCollideWorldBounds(true); //makes chocolate bounce off the edges
+        
+        this.chocolate2 = this.chocolates.create(600, 200, 'chocolate').setScale(0.15);
+        this.chocolate2.setVelocityY(-120);
+        this.chocolate2.setBounce(1);
+        this.chocolate2.setCollideWorldBounds(true);
+        
+        this.chocolate3 = this.chocolates.create(100, 250, 'chocolate').setScale(0.15);
+        this.chocolate3.setVelocityX(-180);
+        this.chocolate3.setVelocityY(100);
+        this.chocolate3.setBounce(1);
+        this.chocolate3.setCollideWorldBounds(true);
+
         // Player
         this.player = new Player(this, 100, 630);
         this.physics.add.collider(this.player, this.platforms);
@@ -76,6 +98,9 @@ export class Level5 extends Scene {
 
         this.physics.add.collider(this.bones, this.platforms);
         this.physics.add.collider(this.player, this.hydrants);
+        this.physics.add.collider(this.player, this.chocolates, (player, chocolate) => {
+            hitChocolate(this, player, chocolate);
+        }, null, this);
         this.physics.add.overlap(this.player, this.bones, this.collectBone, null, this);
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -105,8 +130,8 @@ export class Level5 extends Scene {
             strokeThickness: 4
         });
 
-        // Epic level indicator
-        this.levelText = this.add.text(512, 350, 'ULTIMATE LEVEL 5!', {
+        // Intro level indicator
+        this.introText = this.add.text(512, 350, 'ULTIMATE LEVEL 5!', {
             fontSize: '48px',
             fill: '#ffff00',
             fontStyle: 'bold',
@@ -117,10 +142,17 @@ export class Level5 extends Scene {
         // Fade out level text after 2 seconds
         this.time.delayedCall(2000, () => {
             this.tweens.add({
-                targets: this.levelText,
+                targets: this.introText,
                 alpha: 0,
                 duration: 1000
             });
+        });
+
+        // Level 
+        this.levelText = this.add.text(16, 56, 'LEVEL 5', {
+            fontSize: '28px',
+            fill: '#ffff00',
+            fontStyle: 'bold'
         });
 
         EventBus.emit('current-scene-ready', this);
@@ -179,13 +211,6 @@ export class Level5 extends Scene {
         bone.disableBody(true, true);
         this.score += 10;
         this.scoreText.setText('Score: ' + this.score);
-
-        // Add celebration flash for each bone
-        this.cameras.main.flash(200, 255, 255, 255, false, (camera, progress) => {
-            if (progress === 1) {
-                this.cameras.main.setBackgroundColor(0x1e5631);
-            }
-        });
 
         if (this.bones.countActive(true) === 0) {
             this.timeEvent.remove(); // Stop timer

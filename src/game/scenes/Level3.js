@@ -14,7 +14,7 @@ export class Level3 extends Scene {
         this.hearts = Hearts(this, 3, 0.1, 30, 40, 40);
         this.cameras.main.setBackgroundColor(0x3cb371); 
 
-        // Platforms - More challenging layout with smaller platforms
+        // Platforms
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(150, 650, 'wall').setScale(0.5, 1).refreshBody(); // Smaller ground platforms
         this.platforms.create(500, 650, 'wall').setScale(0.4, 1).refreshBody();
@@ -44,7 +44,7 @@ export class Level3 extends Scene {
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        // More bones in harder-to-reach places
+        // Bones
         this.bones = this.physics.add.staticGroup();
         this.bones.create(325, 450, 'bone').setScale(0.3).refreshBody();
         this.bones.create(700, 330, 'bone').setScale(0.3).refreshBody();
@@ -123,7 +123,7 @@ export class Level3 extends Scene {
         }
     }
 
-    updateTimer() {
+    updateTimer() { 
         this.timeLeft--;
         this.timerText.setText('Time: ' + this.timeLeft);
         
